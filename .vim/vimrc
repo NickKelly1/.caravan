@@ -1,5 +1,8 @@
 " [See](https://www.youtube.com/watch?v=n9k9scbTuvQ)
 syntax on
+" https://unencumberedbyfacts.com/2016/01/04/psql-vim-happy-face/
+" sql syntax when editing for psql cli tool
+au BufRead /tmp/psql.edit* set syntax=sql
 
 set noerrorbells
 set tabstop=2

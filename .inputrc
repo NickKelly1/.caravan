@@ -1,0 +1,5 @@
+# https://unencumberedbyfacts.com/2016/01/04/psql-vim-happy-face/
+
+set editing-mode vi
+set keymap vi-command
+
