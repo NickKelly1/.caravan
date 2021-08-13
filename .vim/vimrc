@@ -1,13 +1,19 @@
+" [CoC](https://thoughtbot.com/blog/modern-typescript-and-react-development-in-vim)
 " [See](https://www.youtube.com/watch?v=n9k9scbTuvQ)
 syntax on
+
 " https://unencumberedbyfacts.com/2016/01/04/psql-vim-happy-face/
 " sql syntax when editing for psql cli tool
 au BufRead /tmp/psql.edit* set syntax=sql
 
 set noerrorbells
+" n characters long
 set tabstop=2
+" n spaces long
 set softtabstop=2
+" > shifts by n
 set shiftwidth=2
+" spaces instead of tabs
 set expandtab
 set smartindent
 set nu rnu
@@ -17,39 +23,69 @@ set noswapfile
 set nobackup
 set undodir=~/.vim/undodir
 set undofile
+" incremental search - get results while you search
 set incsearch
-set colorcolumn=80
+set t_Co=256
+set hls
 
+" what does this do?
 filetype plugin on
 
+" 80 column
 highlight ColorColumn ctermbg=0 guibg=lightgrey
+set colorcolumn=80
 
+" plugins
 call plug#begin('~/.vim/plugged')
 
 " [Force vim to use python3](https://robertbasic.com/blog/force-python-version-in-vim/)
 " to check verison, run
 " :python import sys; print(sys.version)
 if has('python3')
+  " ?
 elseif has('python')
+  " ?
+endif
+
+Plug 'peitalin/vim-jsx-typescript'
+Plug 'jparise/vim-graphql'
+
+" https://thoughtbot.com/blog/modern-typescript-and-react-development-in-vim
+Plug 'neoclide/coc.nvim', { 'branch': 'release' }
+let g:coc_global_extensions = [
+  \ 'coc-tsserver',
+  \ 'coc-html',
+  \ 'coc-css',
+  \ ]
+if isdirectory('.node_modules') && isdirectory('./node_modules/prettier')
+  let g:coc_global_extensions += ['coc-prettier']
+endif
+if isdirectory('.node_modules') && isdirectory('./node_modules/eslint')
+  let g:coc_global_extensions += ['coc-eslint']
 endif
 
 Plug 'morhetz/gruvbox'
-Plug 'jremmen/vim-ripgrep'
+" Plug 'jremmen/vim-ripgrep'
 " :Git add
 " :Git commi
 " :Git diff
 " :Git blame
 " :Git log
-" force bufffer: --paginate -p
+" force buffer: --paginate -p
 Plug 'tpope/vim-fugitive'
 " [GitHub typescript-vim](https://github.com/leafgarland/typescript-vim)
+
 Plug 'leafgarland/typescript-vim'
+Plug 'pangloss/vim-javascript'
+
 " :Man printf
 " :Man pri<Tab> # auto complete
+" open man pages in vim
 " :gx # open a link under cursor in a browser
 " :gf # jump to a file under cursor
 Plug 'vim-utils/vim-man'
-Plug 'lyuts/vim-rtags'
+
+" Plug 'lyuts/vim-rtags'
 " [GitHub Ctrlp](https://github.com/ctrlpvim/ctrlp.vim)
 Plug 'ctrlpvim/ctrlp.vim'
 " [GitHub CoC](https://github.com/neoclide/coc.nvim)
@@ -57,34 +93,42 @@ Plug 'ctrlpvim/ctrlp.vim'
 Plug 'mbbill/undotree'
 " [GitHub NERDTree](https://github.com/preservim/nerdtree)
 Plug 'preservim/nerdtree'
-Plug 'terryma/vim-multiple-cursors'
+" Plug 'terryma/vim-multiple-cursors'
 " [GitHub Vim Airline](https://github.com/vim-airline/vim-airline)
 Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
 " [GitHub Nerdcommenter](https://github.com/preservim/nerdcommenter)
-Plug 'preservim/nerdcommenter'
+" Plug 'preservim/nerdcommenter'
+" python autocomplete:
 " [GitHub Jedi-Vim](https://github.com/davidhalter/jedi-vim)
 Plug 'davidhalter/jedi-vim'
 
 call plug#end()
 
+" leader
+let mapleader = " "
 
-set t_Co=256
+" theme
 colorscheme gruvbox
 let g:gruvbox_contrast_dark='hard'
 set background=dark
 
-" allow rg to detect root
+" ripgrep:
+" allow rg (ripgrep) to detect root
 " & use .git as root
 " & use .gitignore for faster searching
 if executable('rg')
   let g:rg_device_root='true'
 endif
 
+" ctrp:
 " ignore with ctrlp
-let g:ctrlp_user_command = ['./git', 'git --git-dir=%s/.git ls-files -oc --exclude-standard']
-" leader key = spacebar
-let mapleader = " "
+let g:ctrlp_user_command = [
+  \'./git',
+  \'git --git-dir=%s/.git ls-files -oc --exclude-standard',
+\]
+
+" netrw
 let g:netrw_browse_split=2
 " remove help information on file tree
 let g_netrw_banner=0
@@ -95,26 +139,28 @@ let g:netrw_winsize=25
 let g:ctrlp_use_caching=0
 
 " remaps
-nnoremap <leader>h :wincmd h<CR>
-nnoremap <leader>j :wincmd j<CR>
-nnoremap <leader>k :wincmd k<CR>
-nnoremap <leader>l :wincmd l<CR>
-nnoremap <leader>u :UndotreeShow<CR>
+" nnoremap <leader>h :wincmd h<CR>
+" nnoremap <leader>j :wincmd j<CR>
+" nnoremap <leader>k :wincmd k<CR>
+" nnoremap <leader>l :wincmd l<CR>
+" nnoremap <leader>u :UndotreeShow<CR>
+
 " wincmd v splits 2 windows
 " :Ex opens netrw
 " resizes to 30
-nnoremap <leader>pv :wincmd v<bar> :Ex <bar> :vertical resize 30<CR>
+" nnoremap <leader>pv :wincmd v<bar> :Ex <bar> :vertical resize 30<CR>
 " ps: Project search
 " opens Ripgrep instantly
-nnoremap <leader>ps :Rg<SPACE>
-nnoremap <silent> <leader>+ :vertical resize +5<CR>
-nnoremap <silent> <leader>- :vertical resize -5<CR>
+" nnoremap <leader>ps :Rg<SPACE>
+"
+" nnoremap <silent> <leader>+ :vertical resize +10<CR>
+" nnoremap <silent> <leader>- :vertical resize -10<CR>
 
 " [make QuickFix show if there are any errors](https://github.com/leafgarland/typescript-vim)
 autocmd QuickFixCmdPost [^l]* nested cwindow
 autocmd QuickFixCmdPost [^l]* nested lwindow
 
-nnoremap <silent> <leader>d :NERDTreeToggle<CR>
+nnoremap <silent> <leader>e :NERDTreeToggle<CR>
 " map <C-d> :hihi<CR>
 
 " Starting NERDTree with vim if no files were specified
@@ -129,7 +175,7 @@ autocmd VimEnter * if argc() == 1 && isdirectory(argv()[0]) && !exists("s:std_in
 " let g:NERDTreeHijackNetrw=0
 
 " close vim if only window left is NERDTree
-autocmd * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree())) | q | endif
+autocmd * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
 
 " [Airline Config](https://github.com/vim-airline/vim-airline)
 let g:airline#extensions#tabline#enabled = 1
@@ -167,7 +213,6 @@ let g:NERDToggleCheckAllLines = 1
 " <leader>cy            => same as cc except that commented line(s) are yanked first
 " <leader>cu            => uncomment the selected lines
 
-
 " Python
 if (&filetype=='py')
   " [Jedi-Vim config](https://github.com/davidhalter/jedi-vim)
@@ -175,7 +220,7 @@ if (&filetype=='py')
 endif
 
 " [Copying to clipboard](https://github.com/leafgarland/typescript-vim)
-vmap <C-c> "+y
+" vmap <C-c> "+y
 
 " make copy-pasting ident lines correctly
 " [GitHub plugin](https://github.com/ConradIrwin/vim-bracketed-paste)
@@ -183,3 +228,76 @@ vmap <C-c> "+y
 " Setting this has side effects so I'm keeping turned off
 " Use ":help paste" for more info
 
+
+" CoC
+" nnoremap <leader>h :call CocAction('doHover')<CR>
+" nnoremap <leader>d :call CocAction('jumpDefinition')<CR>
+" nnoremap <leader>t :call CocAction('jumpTypeDefinition')<CR>
+" nnoremap <leader>r :call CocAction('jumpReferences')<CR>
+"
+" nmap <silent> gd <Plug>(coc-definition)
+" nmap <silent> gy <Plug>(coc-type-definition)
+" nmap <silent> gr <Plug>(coc-references)
+" nmap <silent> [g <Plug>(coc-diagnostic-prev)
+" nmap <silent> ]g <Plug>(coc-diagnostic_next)
+
+nnoremap gh :call CocAction('doHover')<CR>
+nmap gi <Plug>(coc-diagnostic-info)
+
+nmap gsd :call CocAction('jumpDefinition', 'split')<CR>
+nmap gst :call CocAction('jumpTypeDefinition', 'split')<CR>
+nmap gsr :call CocAction('jumpReferences', 'split')<CR>
+
+nmap gvd :call CocAction('jumpDefinition', 'vsplit')<CR>
+nmap gvt :call CocAction('jumpTypeDefinition', 'vsplit')<CR>
+nmap gvr :call CocAction('jumpReferences', 'vsplit')<CR>
+
+" cycle between issues
+nmap [g <Plug>(coc-diagnostic-prev)
+nmap ]g <Plug>(coc-diagnostic-next)
+
+" show a list of diagnostic errors
+nnoremap <leader>di :<C-u>CocList diagnostics<CR>
+
+" show a list of fuzzy-searchable symbols
+nnoremap <leader>sy :<C-u>CocList -I symbols<CR>
+
+" display code actions
+nmap <leader>do <Plug>(coc-codeaction)
+
+" rename a symbol
+nmap <leader>rn <Plug>(coc-rename)
+
+" nnoremap <silent> gq :call 
+
+" " show docs on cursor target if pondering...
+" function! ShowDocIfNotDiagnostic(timer_id)
+"   nvim only?
+"   if (coc#util#has_float() == 0)
+"     silent call CocActionAsync('doHover')
+"   endif
+" endfunction
+" 
+" function! s:show_hover_doc()
+"   call timer_start(500, 'ShowDocIfNotDiagnostic')
+" endfunction
+" 
+" autocmd CursorHoldI * :call <SID>show_hover_doc()
+" autocmd CursorHold * :call <SID>show_hover_doc()
+"
+
+iabbrev schtml5 <!DOCTYPE html><CR>
+\<html lang="en"><CR>
+\<head><CR>
+ \<meta http-equiv="Content-Type" content="text/html; charset=utf-8" /><CR>
+	\<meta name="description" content="" /><CR>
+	\<meta name="author" content="" /><CR>
+	\<meta name="viewport" content="user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, width=device-width" /><CR>
+	\<title></title><CR>
+	\<link href="css/style.css" rel="stylesheet" /><CR>
+\</head><CR>
+\<body><CR>
+	\<div><CR>
+	\</div><CR>
+\</body><CR>
+\</html><CR>
